@@ -22,8 +22,7 @@ label = pd.read_csv(r"./data/feature_output.csv")
 train_num = label.shape[0]
 test_num = all_data.shape[0]-train_num
 all_data_tensor = torch.Tensor(all_data.values)
-print("all_data",type(all_data_tensor))
-print(all_data_tensor)
+
 
 
 
