@@ -21,8 +21,9 @@ all_data = pd.read_csv(r"./data/feature_output.csv")
 label = pd.read_csv(r"./data/feature_output.csv")
 train_num = label.shape[0]
 test_num = all_data.shape[0]-train_num
-for i in all_data:
-    print(i)
+all_data_tensor = torch.Tensor(all_data.values)
+print("all_data",type(all_data_tensor))
+print(all_data_tensor)
 
 
 
@@ -34,11 +35,11 @@ def main():
     print("ot", ot)
 
     # train the model
-    for epoch in range(5):
-        for x,y in enumerate(all_data):
-            ot = net(x)
-            loss = mse(ot,y)
-            print("train loss",loss)
+    # for epoch in range(5):
+    #     for x,y in enumerate(all_data):
+    #         ot = net(x)
+    #         loss = mse(ot,y)
+    #         print("train loss",loss)
 
 
 if __name__ == '__main__':
