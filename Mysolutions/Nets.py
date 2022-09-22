@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import pandas as pd
+from torch.utils.data import Dataset
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
@@ -24,6 +25,18 @@ test_num = all_data.shape[0]-train_num
 all_data_tensor = torch.Tensor(all_data.values)
 
 
+class Tabular(Dataset):
+    def __init__(self, root, resize, mode):
+        super(Tabular, self).__init__()
+        self.root = root
+        self.resize = resize
+
+
+    def __len__(self):
+        pass
+
+    def __getitem__(self, idx):
+        pass
 
 
 def main():
