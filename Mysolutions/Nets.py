@@ -23,17 +23,25 @@ label = pd.read_csv(r"./data/feature_output.csv")
 train_num = label.shape[0]
 test_num = all_data.shape[0]-train_num
 all_data_tensor = torch.Tensor(all_data.values)
+label_tensor = torch.Tensor(label)
 
 
 class Tabular(Dataset):
-    def __init__(self, root, resize, mode):
+    def __init__(self, root, resize, mode, data, label):
         super(Tabular, self).__init__()
         self.root = root
         self.resize = resize
-
+        if mode == 'train':
+            self.data = data[:int(0.6*data.shape[0])]
+            self.label = label[:int(0.6*label.shape[0])]
+        elif mode == 'val':
+            self.data = data[int(0.6*data.shape[0]):]
+            self.label = label[int(0.6*label.shape[0])]
 
     def __len__(self):
-        pass
+
+        return len
+
 
     def __getitem__(self, idx):
         pass
