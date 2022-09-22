@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import pandas as pd
 from torch.utils.data import Dataset
+from torchvision import transforms
+from PIL import Image
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
@@ -40,11 +42,19 @@ class Tabular(Dataset):
 
     def __len__(self):
 
-        return len
+        return len(self.data)
 
 
     def __getitem__(self, idx):
-        pass
+        # idx= 0~len(self.data)
+        # tf = transforms.Compose([
+        #     lambda x:Image.open(x).convert('RGB') ,# 'strig'=>image data
+        #     transforms.Resize((self.resize,self.resize)),
+        #     transforms.ToTensor()
+        # ])
+        # img = tf.(img)
+        t_data, t_label = torch.tensor(self.data[idx]), torch.tensor(self.label[idx])
+        return t_data, t_label
 
 
 def main():
