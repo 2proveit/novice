@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
 import pandas as pd
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+#from tensorboard import SummeryWriter s
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class Nets(nn.Module):
@@ -24,9 +25,8 @@ all_data = pd.read_csv(r"./data/feature_output.csv")
 label = pd.read_csv(r"./data/feature_output.csv")
 train_num = label.shape[0]
 test_num = all_data.shape[0]-train_num
-all_data_tensor = torch.Tensor(all_data.values)
-label_tensor = torch.Tensor(label)
-
+all_data_tensor = torch.tensor(all_data.values, dtype=torch.float)
+label_tensor = torch.tensor(label.values, dtype=torch.float)
 
 class Tabular(Dataset):
     def __init__(self, root, resize, mode, data, label):
@@ -53,23 +53,30 @@ class Tabular(Dataset):
         #     transforms.ToTensor()
         # ])
         # img = tf.(img)
-        t_data, t_label = torch.tensor(self.data[idx]), torch.tensor(self.label[idx])
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        t_data, t_label = torch.tensor(self.data[idx]).to(device), torch.tensor(self.label[idx]).to(device)
         return t_data, t_label
 
 
 def main():
     net = Nets().to(device)
-    input = torch.randn(1, 11).to(device)
+    train_data = Tabular(root=None, resize=None, mode='train', data=all_data_tensor[:train_num], label=label_tensor)
+    val_data = Tabular(root=None, resize=None, mode="val", data=all_data_tensor[:train_num], label=label_tensor)
+    loader = DataLoader(train_data, batch_size=32, shuffle=True,num_workers=8)
     mse = nn.MSELoss()
-    ot = net(input)
-    print("ot", ot)
+    optimizer = torch.optim.Adam(net.parameters(), lr=0.1)
+
 
     # train the model
-    # for epoch in range(5):
-    #     for x,y in enumerate(all_data):
-    #         ot = net(x)
-    #         loss = mse(ot,y)
-    #         print("train loss",loss)
+    for epoch in range(50):
+        for x, y in loader:
+            ot = net(x)
+            loss = mse(ot, y)
+            print("train loss", loss.item())
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
 
 if __name__ == '__main__':
