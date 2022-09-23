@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import pandas as pd
+from torch.utils.tensorboard import SummaryWriter as sw
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
@@ -62,23 +63,41 @@ class Tabular(Dataset):
 
 def main():
     net = Nets().to(device)
+    writer = sw("logs")
     print("loading data to device:", device)
     train_data = Tabular(root=None, resize=None, mode='train', data=all_data_tensor[:train_num], label=label_tensor)
     val_data = Tabular(root=None, resize=None, mode="val", data=all_data_tensor[:train_num], label=label_tensor)
     loader = DataLoader(train_data, batch_size=32, shuffle=True, num_workers=8)
+    val_loader = DataLoader(val_data, batch_size=32, shuffle=True,num_workers=8)
     mse = nn.MSELoss()
     optimizer = torch.optim.Adam(net.parameters(), lr=0.1)
 
-
+    print("start to train\n".center(50, '-'))
     # train the model
+    step =0
     for epoch in range(50):
+        print("training epoch:", epoch)
+
         for x, y in loader:
+            step+=1
             ot = net(x)
             loss = mse(ot, y)
+            writer.add_scalar(tag="train loss", scalar_value=loss.item(),global_step=step)
             print("train loss", loss.item())
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+    print("training finish!\n".center(50, '-'))
+    print("start to validation\n".center(50, '-'))
+    step=0
+    for x, y in val_loader:
+        step+=1
+        valot = net(x)
+        val_loss = mse(y, valot)
+        print("val loss:", val_loss.item(),step)
+        writer.add_scalar("val loss", val_loss.item())
+    writer.close()
+    print("validation finished!\n".center(50, '-'))
 
 
 if __name__ == '__main__':
