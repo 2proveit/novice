@@ -40,7 +40,7 @@ X = train.drop(columns = 'num_sold')
 y = train.num_sold
 
 
-X_train, X_val, y_train, y_val = train_test_split(X,y,random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X, y, random_state=42)
 
 
 all_d = all_data.drop(columns = 'num_sold')
@@ -51,7 +51,7 @@ svr_pre2 = svr_.predict(test)
 train['svr'] = svr_pre1
 test['svr'] = svr_pre2
 
-X_train, X_val, y_train, y_val = train_test_split(X,y,random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X, y, random_state=42)
 
 xgr = xg.XGBRegressor()
 xgr.fit(X_train,y_train)

@@ -4,7 +4,7 @@ import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
-#from tensorboard import SummeryWriter s
+# from tensorboard import SummeryWriter s
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -27,6 +27,7 @@ train_num = label.shape[0]
 test_num = all_data.shape[0]-train_num
 all_data_tensor = torch.tensor(all_data.values, dtype=torch.float)
 label_tensor = torch.tensor(label.values, dtype=torch.float)
+
 
 class Tabular(Dataset):
     def __init__(self, root, resize, mode, data, label):
@@ -61,9 +62,10 @@ class Tabular(Dataset):
 
 def main():
     net = Nets().to(device)
+    print("loading data to device:", device)
     train_data = Tabular(root=None, resize=None, mode='train', data=all_data_tensor[:train_num], label=label_tensor)
     val_data = Tabular(root=None, resize=None, mode="val", data=all_data_tensor[:train_num], label=label_tensor)
-    loader = DataLoader(train_data, batch_size=32, shuffle=True,num_workers=8)
+    loader = DataLoader(train_data, batch_size=32, shuffle=True, num_workers=8)
     mse = nn.MSELoss()
     optimizer = torch.optim.Adam(net.parameters(), lr=0.1)
 
