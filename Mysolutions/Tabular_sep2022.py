@@ -20,7 +20,11 @@ class MyNet(nn.Module):
             nn.Conv1d(32,16,3,1),
             nn.ReLU(),
             nn.AvgPool1d(2,2,1)
+
+
         )
+    def forward(self,x):
+        return  self.CovdLayer(x)
 
 
 class TabularDataset(Dataset,):
@@ -42,3 +46,8 @@ class TabularDataset(Dataset,):
             return self.X[idx], self.y[idx]
         else:
             return self.X[idx], self.y[idx]
+
+
+if __name__ == "__main__":
+    net = MyNet(feat=2)
+    print(net(torch.tensor([[2,3,4]])))
