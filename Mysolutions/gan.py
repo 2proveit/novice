@@ -1,5 +1,5 @@
 import numpy as np
-import torch,numpy,torchvision
+import torch, numpy, torchvision
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import transforms
@@ -15,7 +15,9 @@ transform = transforms.Compose([
 train_ds = torchvision.datasets.MNIST('data',train=True, transform = transform, download = True)
 dataloader = torch.utils.data.DataLoader(train_ds, batch_size=64, shuffle=True)
 
+
 class Generator(nn.Module):
+
     def __init__(self):
         super(Generator, self).__init__()
         self.main = nn.Sequential(
@@ -26,6 +28,7 @@ class Generator(nn.Module):
             nn.Linear(512,28*28),
             nn.Tanh()
         )
+
     def forward(self,x): # x represents noise input
         img = self.main(x)
         img = img.view(-1,28,28,1)
